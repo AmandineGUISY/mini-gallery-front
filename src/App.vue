@@ -2,6 +2,8 @@
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { type Photo } from './types/index.tsx';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCamera, faImages } from '@fortawesome/free-solid-svg-icons'
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
@@ -31,12 +33,11 @@ const getImages = async () => {
       <h2 class="card-header">{{ image.title }}</h2>
       <div class="card-body">
         <img :src="`${API_BASE_URL}${image.thumbnail_url}`" :alt="image.title" />
-        <p>{{ image.category }}</p>
       </div>
     </div>
   </div>
   <div v-else>
-    <p>Chargement des images...</p>
+    <p>Pas d'image pour le moment !</p>
   </div>
 </template>
 
