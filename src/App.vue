@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import AddImage from './components/addImage.vue';
 import { type Photo } from './types/index.tsx';
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -64,10 +65,7 @@ const updateTitle = async (idImage: number) => {
   <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
       <h1 class="mb-0">Mini Galerie</h1>
-      <button class="btn btn-success d-flex align-items-center gap-2">
-        <font-awesome-icon icon="plus"/>
-        <span>Ajouter une Image</span>
-      </button>
+      <AddImage @image-added="getImages" class="mb-4" />
     </div>
 
     <div v-if="images.length > 0" class="row g-4">
@@ -128,8 +126,6 @@ const updateTitle = async (idImage: number) => {
 .polaroid:hover {
   transform: rotate(-3deg) scale(1.05);
 }
-
-
 
 .polaroid-header {
   text-align: left;
