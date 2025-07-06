@@ -61,34 +61,51 @@ const updateTitle = async (idImage: number) => {
 </script>
 
 <template>
-  <h1>Mini Gallerie</h1>
-  <div class="d-flex gap-2 flex-row align-items-center">
-    <h2>Ajouter une Image</h2>
-    <button class="btn btn-outline-success btn-sm square" ><font-awesome-icon icon="plus"/></button>
-  </div>
-  <div v-if="images.length > 0" class="card">
-    <div v-for="image in images" :key="image.id" >
-      <div class="card-header d-flex justify-content-between align-items-center gap-2">
-        <h4 v-if="editingImageId !== image.id">{{ image.title }}</h4>
-        <input v-else type="text" v-model="newTitle" class="form-control" @keyup.enter="updateTitle(image.id)" @keyup.esc="cancelEditing">
-        <div class="d-flex gap-2">
-          <template v-if="editingImageId === image.id">
-            <button class="btn btn-outline-success btn-sm square" @click="updateTitle(image.id)"><font-awesome-icon icon="check"/></button>
-            <button class="btn btn-outline-danger btn-sm square" @click="cancelEditing"><font-awesome-icon icon="xmark"/></button>
-          </template>
-          <template v-else>
-            <button class="btn btn-outline-warning btn-sm square" @click="startEditing(image)"><font-awesome-icon icon="pen-to-square" /></button>
-            <button class="btn btn-outline-danger btn-sm square" @click="deleteImage(image.id)"><font-awesome-icon icon="trash" /></button>
-          </template>
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <h1 class="mb-0">Mini Galerie</h1>
+      <button class="btn btn-success d-flex align-items-center gap-2">
+        <font-awesome-icon icon="plus"/>
+        <span>Ajouter une Image</span>
+      </button>
+    </div>
+
+    <div v-if="images.length > 0" class="row g-4">
+      <div v-for="image in images" :key="image.id" class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="polaroid d-flex flex-column h-100 position-relative">
+          <div class="polaroid-header d-flex justify-content-between align-items-center gap-2 w-100">
+            <div class="flex-grow-1 text-truncate">
+              <h6 v-if="editingImageId !== image.id" class="mb-0">{{ image.title }}</h6>
+              <input v-else type="text" v-model="newTitle" class="form-control form-control-sm" @keyup.enter="updateTitle(image.id)" @keyup.esc="cancelEditing">
+            </div>
+            <div class="d-flex gap-1 flex-shrink-0">
+              <template v-if="editingImageId === image.id">
+                <button class="btn btn-outline-success btn-sm square" @click="updateTitle(image.id)">
+                  <font-awesome-icon icon="check"/>
+                </button>
+                <button class="btn btn-outline-danger btn-sm square" @click="cancelEditing">
+                  <font-awesome-icon icon="xmark"/>
+                </button>
+              </template>
+              <template v-else>
+                <button class="btn btn-outline-warning btn-sm square" @click="startEditing(image)">
+                  <font-awesome-icon icon="pen-to-square"/>
+                </button>
+                <button class="btn btn-outline-danger btn-sm square" @click="deleteImage(image.id)">
+                  <font-awesome-icon icon="trash"/>
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <img :src="`${API_BASE_URL}${image.thumbnail_url}`" :alt="image.title" class="img-fluid mt-2 flex-grow-1" />
         </div>
       </div>
-      <div class="card-body">
-        <img :src="`${API_BASE_URL}${image.thumbnail_url}`" :alt="image.title" />
-      </div>
     </div>
-  </div>
-  <div v-else>
-    <p>Pas d'image pour le moment !</p>
+
+    <div v-else class="text-center py-5">
+      <p class="fs-4 text-muted">Pas d'image pour le moment !</p>
+    </div>
   </div>
 </template>
 
@@ -96,5 +113,25 @@ const updateTitle = async (idImage: number) => {
 .square {
   width: 32px;
   height: 32px;
+}
+
+.polaroid {
+  background: white;
+  padding: 10px;
+  border: 8px solid white;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  transition: transform 0.3s;
+  border-bottom-width: 60px;
+}
+
+.polaroid:hover {
+  transform: rotate(-3deg) scale(1.05);
+}
+
+
+
+.polaroid-header {
+  text-align: left;
 }
 </style>
