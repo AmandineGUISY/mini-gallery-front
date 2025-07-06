@@ -6,6 +6,8 @@ import { type Photo } from './types/index.tsx';
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const images = ref<Photo[]>([]);
+const editingImageId = ref<number | null>(null);
+const newTitle = ref('');
 
 onMounted(async () => {
     getImages();
@@ -32,10 +34,29 @@ const deleteImage = async (idImage: number) => {
   }
 }
 
-const updateTitleImg = async (newTitle : string) => {
-  try {
+const startEditing = (image: Photo) => {
+  editingImageId.value = image.id;
+  newTitle.value = image.title;
+};
 
-  } catch(error) 
+const cancelEditing = () => {
+  editingImageId.value = null;
+  newTitle.value = '';
+};
+
+const saveTitle = async (idImage: number) => {
+
+  try {
+    console.log(newTitle.value);
+    await axios.patch(`${API_BASE_URL}/photos/${idImage}`, null, {
+      params: { photo_update: newTitle.value }
+    });
+    await getImages();
+    cancelEditing();
+  } catch(error) {
+    cancelEditing();
+    console.error("Une erreur est survenue lors de la modification de l'image", error);
+  }
 }
 
 </script>
@@ -44,13 +65,18 @@ const updateTitleImg = async (newTitle : string) => {
   <h1>Mini Gallerie</h1>
   <div v-if="images.length > 0" class="card">
     <div v-for="image in images" :key="image.id" >
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h2>{{ image.title }}</h2>
+      <div class="card-header d-flex justify-content-between align-items-center gap-2">
+        <h2 v-if="editingImageId !== image.id">{{ image.title }}</h2>
+        <input v-else type="text" v-model="newTitle" class="form-control" @keyup.enter="saveTitle(image.id)" @keyup.esc="cancelEditing">
         <div class="d-flex gap-2">
-          <button class="btn btn-outline-success btn-sm square"><font-awesome-icon icon="check"/></button>
-          <button class="btn btn-outline-danger btn-sm square"><font-awesome-icon icon="xmark"/></button>
-          <button class="btn btn-outline-warning btn-sm square"><font-awesome-icon icon="pen-to-square" /></button>
-          <button class="btn btn-outline-danger btn-sm square" @click="deleteImage(image.id)"><font-awesome-icon icon="trash" /></button>
+          <template v-if="editingImageId === image.id">
+            <button class="btn btn-outline-success btn-sm square" @click="saveTitle(image.id)"><font-awesome-icon icon="check"/></button>
+            <button class="btn btn-outline-danger btn-sm square" @click="cancelEditing"><font-awesome-icon icon="xmark"/></button>
+          </template>
+          <template v-else>
+            <button class="btn btn-outline-warning btn-sm square" @click="startEditing(image)"><font-awesome-icon icon="pen-to-square" /></button>
+            <button class="btn btn-outline-danger btn-sm square" @click="deleteImage(image.id)"><font-awesome-icon icon="trash" /></button>
+          </template>
         </div>
       </div>
       <div class="card-body">
