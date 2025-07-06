@@ -44,10 +44,9 @@ const cancelEditing = () => {
   newTitle.value = '';
 };
 
-const saveTitle = async (idImage: number) => {
+const updateTitle = async (idImage: number) => {
 
   try {
-    console.log(newTitle.value);
     await axios.patch(`${API_BASE_URL}/photos/${idImage}`, null, {
       params: { photo_update: newTitle.value }
     });
@@ -63,14 +62,18 @@ const saveTitle = async (idImage: number) => {
 
 <template>
   <h1>Mini Gallerie</h1>
+  <div class="d-flex gap-2 flex-row align-items-center">
+    <h2>Ajouter une Image</h2>
+    <button class="btn btn-outline-success btn-sm square" ><font-awesome-icon icon="plus"/></button>
+  </div>
   <div v-if="images.length > 0" class="card">
     <div v-for="image in images" :key="image.id" >
       <div class="card-header d-flex justify-content-between align-items-center gap-2">
-        <h2 v-if="editingImageId !== image.id">{{ image.title }}</h2>
-        <input v-else type="text" v-model="newTitle" class="form-control" @keyup.enter="saveTitle(image.id)" @keyup.esc="cancelEditing">
+        <h4 v-if="editingImageId !== image.id">{{ image.title }}</h4>
+        <input v-else type="text" v-model="newTitle" class="form-control" @keyup.enter="updateTitle(image.id)" @keyup.esc="cancelEditing">
         <div class="d-flex gap-2">
           <template v-if="editingImageId === image.id">
-            <button class="btn btn-outline-success btn-sm square" @click="saveTitle(image.id)"><font-awesome-icon icon="check"/></button>
+            <button class="btn btn-outline-success btn-sm square" @click="updateTitle(image.id)"><font-awesome-icon icon="check"/></button>
             <button class="btn btn-outline-danger btn-sm square" @click="cancelEditing"><font-awesome-icon icon="xmark"/></button>
           </template>
           <template v-else>
