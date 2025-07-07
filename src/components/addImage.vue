@@ -51,6 +51,31 @@ const handleFileChange = (event: Event) => {
 
   imageFile.value = file;
 };
+
+const addImage = async () => {
+  if (!title.value || !imageFile.value) {
+    console.log("Le titre et l'image sont requis.");
+    return;
+  }
+
+    const formData = new FormData();
+    formData.append('title', title.value);
+    formData.append('file', imageFile.value);
+    formData.append('category','');
+    formData.append('tags', '');
+    try {
+        await axios.post(`${API_BASE_URL}/photos`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+        });
+        emit('image-added');
+        closeForm();
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de l'image:", error);
+    }
+}
+
 </script>
 
 <template>
@@ -59,14 +84,14 @@ const handleFileChange = (event: Event) => {
     <div class="card modal-container p-4 shadow-lg">
       <div class="mb-3">
         <label class="form-label">Titre</label>
-        <input v-model="title" type="text" class="form-control" placeholder="Titre de l'image" />
+        <input v-model="title" type="text" class="form-control" placeholder="Titre de l'image" required />
       </div>
       <div class="mb-3">
         <label class="form-label">Image</label>
-        <input id="file-input" ref="fileInput" type="file" class="form-control" :accept="ALLOWED_FILE_TYPES.join(',')" @change="handleFileChange"/>
+        <input id="file-input" ref="fileInput" type="file" class="form-control" :accept="ALLOWED_FILE_TYPES.join(',')" @change="handleFileChange" required/>
       </div>
       <div class="d-flex gap-2 mt-2 flex-row justify-content-end">
-        <button @click="" class="btn btn-success">
+        <button @click="addImage()" class="btn btn-success">
           <font-awesome-icon icon="check"/>
         </button>
         <button @click="closeForm()" class="btn btn-danger">
