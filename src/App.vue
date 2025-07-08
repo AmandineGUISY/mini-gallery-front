@@ -2,13 +2,16 @@
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import AddImage from './components/addImage.vue';
-import { type Photo } from './types/index.tsx';
+import { type Photo } from './types/index.ts';
+import useToast from 'vue-toastification'
+
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const images = ref<Photo[]>([]);
 const editingImageId = ref<number | null>(null);
 const newTitle = ref('');
+const toast = useToast()
 
 onMounted(async () => {
     getImages();
@@ -28,10 +31,12 @@ const getImages = async () => {
 const deleteImage = async (idImage: number) => {
   try {
     await axios.delete(`${API_BASE_URL}/photos/${idImage}`);
+    toast.success('Image supprimé avec succés !')
     getImages();
 
   } catch(error) {
     console.error("Une erreur est survenue lors de la suppression d'une image", error);
+    toast.error("Une erreur est survenue lors de la suppression de l'image")
   }
 }
 
@@ -52,10 +57,12 @@ const updateTitle = async (idImage: number) => {
       params: { photo_update: newTitle.value }
     });
     await getImages();
+    toast.success("Image modifié avec succés !");
     cancelEditing();
   } catch(error) {
     cancelEditing();
     console.error("Une erreur est survenue lors de la modification de l'image", error);
+    toast.error("Une erreur est survenue lors de la modification");
   }
 }
 
