@@ -3,7 +3,7 @@ import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import AddImage from './components/addImage.vue';
 import { type Photo } from './types/index.ts';
-import useToast from 'vue-toastification'
+import useToast from 'vue-toastification';
 
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -21,9 +21,9 @@ const getImages = async () => {
   try {
       const response = await axios.get(`${API_BASE_URL}/photos`);
       images.value = response.data;
-      console.log(images.value);
 
   } catch (error){
+    toast.info("Pensez à Démarrer le back afin que le front fonctionne completement");
     console.error("Une erreur est survenue lors de la récupération des images", error);
   }
 }

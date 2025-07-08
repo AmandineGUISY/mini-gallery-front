@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
 import axios from 'axios';
+import useToast from 'vue-toastification';
+
 
 const emit = defineEmits(['image-added']);
 
@@ -11,6 +13,7 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const API_BASE_URL = 'http://127.0.0.1:8000';const MAX_FILE_SIZE_MB = 5;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+const toast = useToast();
 
 const closeForm = () => {
     isCreating.value = false;
@@ -70,9 +73,11 @@ const addImage = async () => {
         },
         });
         emit('image-added');
+        toast.success("Image ajouté avec succès !");
         closeForm();
     } catch (error) {
         console.error("Erreur lors de l'ajout de l'image:", error);
+        toast.error("Erreur lors de l'ajout de l'image")
     }
 }
 
